@@ -1,7 +1,6 @@
-from flask import Flask, request, make_response, jsonify
+from flask import Flask, request, jsonify, abort
 from flask_cors import CORS
 from flask_migrate import Migrate
-
 from models import db, Message
 
 app = Flask(__name__)
@@ -26,7 +25,7 @@ def create_message():
     username = data.get('username')
 
     if not body or not username:
-        return make_response(jsonify({"error": "Body and username are required"}), 400)
+        abort(400, description="Body and username are required.")
 
     new_message = Message(body=body, username=username)
     db.session.add(new_message)
@@ -39,7 +38,7 @@ def update_message(id):
     body = data.get('body')
 
     if not body:
-        return make_response(jsonify({"error": "Body is required"}), 400)
+        abort(400, description="Body is required.")
 
     message = Message.query.get_or_404(id)
     message.body = body
